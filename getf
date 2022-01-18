@@ -1,0 +1,55 @@
+#!/bin/bash
+#
+#  getf
+#
+#  Glenn Story - 1/17/22
+#
+#  This shell script will copy a file from .../src
+#
+#  This script is only used by me to move files from my main source
+#  tree and is not needed by anyone else building this code. 
+#
+
+help="
+
+Usage:  getf FILENAME
+
+where:  FILENAME is the file to move (not including directory names)
+"
+
+cd ~/gspython
+
+if [ -z "$1" -o "$1" = "-h" -o "$1" = "--help" ]
+then
+	echo "$help"
+	exit 2
+fi
+
+while [ -n "$1" ]
+do
+	if [ -e "$1" ]
+	then
+		if diff "$1" "$HOME/gs/src/$1"
+		then
+			echo "$1 is already present and up to date"
+			shift 
+			continue
+		else
+			if ! getyn "Do you want to replace the file? "
+			then
+				shift
+				continue
+			fi
+		fi
+	fi
+
+	echo "Copying $1..."
+	if ! cp "$HOME/gs/src/$1" .
+	then
+		exit 1
+	fi
+	shift
+done
+
+
+	
